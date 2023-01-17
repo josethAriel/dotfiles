@@ -1,0 +1,80 @@
+# Fix the Java Problem
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# Aliases
+source $DOTFILES/zsh/aliases.zsh
+
+# History
+setopt histignorealldups sharehistory
+
+# Completion system
+autoload -U compinit; compinit
+_comp_options+=(globdots) # With hidden files
+source $DOTFILES/zsh/completion.zsh
+
+# Prompt
+fpath=($DOTFILES/zsh/prompt $fpath)
+autoload -Uz my_prompt; my_prompt
+
+# Directory Stack
+setopt AUTO_PUSHD           # Push the current directory visited on the stack.
+setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack.
+setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
+alias d='dirs -v'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+# Vi mode
+bindkey -v
+export KEYTIMEOUT=1
+
+# Changing cursor
+source $DOTFILES/zsh/plugins/cursor_mode
+
+# Vim mappingg for completion
+zmodload zsh/complist
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+
+# Editing Command Lines In Vim
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
+
+# Adding Text Objects
+autoload -Uz select-bracketed select-quoted
+zle -N select-quoted
+zle -N select-bracketed
+for km in viopp visual; do
+  bindkey -M $km -- '-' vi-up-line-or-history
+  for c in {a,i}${(s..)^:-\'\"\`\|,./:;=+@}; do
+    bindkey -M $km $c select-quoted
+  done
+  for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+    bindkey -M $km $c select-bracketed
+  done
+done
+
+# Surrounding
+autoload -Uz surround
+zle -N delete-surround surround
+zle -N add-surround surround
+zle -N change-surround surround
+bindkey -M vicmd cs change-surround
+bindkey -M vicmd ds delete-surround
+bindkey -M vicmd ys add-surround
+bindkey -M visual S add-surround
+
+# Manual configuration
+PATH=$HOME/.local/bin:/snap/bin:/usr/sandbox/:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:$GOBIN
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Plugins
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+#source /usr/share/zsh-sudo/sudo.plugin.zsh
+
+# Functions
+source $DOTFILES/zsh/functions.zsh

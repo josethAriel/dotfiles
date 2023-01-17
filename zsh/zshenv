@@ -1,0 +1,14 @@
+export DOTFILES="$HOME/.dotfiles"
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+export HISTFILE=~/.zsh_history
+export HISTSIZE=10000
+export SAVEHIST=10000
+
+
+# Manual configuration writen for me (ariel)
+export GOPATH=$HOME/Workspace/go  
+export GOBIN=$GOPATH/bin
+
